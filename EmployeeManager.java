@@ -11,36 +11,36 @@ public class EmployeeManager {
 
         // Check arguments
         if (args[0].equals("l")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(",");
+                String[] employeeList = fileContent.split(Constants.DELIMITER);
                 for (String employee : employeeList) {
                     System.out.println(employee);
                 }
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].equals("s")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
                 System.out.println(fileContent);
-                String[] employeeList = fileContent.split(",");
+                String[] employeeList = fileContent.split(Constants.DELIMITER);
                 Random random = new Random();
                 int randomIndex = random.nextInt(employeeList.length);
                 System.out.println(employeeList[randomIndex]);
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("+")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String newEmployeeName = args[0].substring(1);
-            writeEmployeeData("," + newEmployeeName, true);
-            System.out.println("Data Loaded.");
+            writeEmployeeData(Constants.DELIMITER + newEmployeeName, true);
+            System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("?")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(",");
+                String[] employeeList = fileContent.split(Constants.DELIMITER);
                 boolean done = false;
                 String searchName = args[0].substring(1);
                 for (int index = 0; index < employeeList.length && !done; index++) {
@@ -50,9 +50,9 @@ public class EmployeeManager {
                     }
                 }
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("c")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
                 char[] characters = fileContent.toCharArray();
@@ -70,32 +70,32 @@ public class EmployeeManager {
                 }
                 System.out.println(wordCount + " word(s) found " + characters.length);
             }
-            System.out.println("Data Loaded.");
+            System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("u")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(",");
+                String[] employeeList = fileContent.split(Constants.DELIMITER);
                 String targetName = args[0].substring(1);
                 for (int index = 0; index < employeeList.length; index++) {
                     if (employeeList[index].equals(targetName)) {
                         employeeList[index] = "Updated";
                     }
                 }
-                writeEmployeeData(String.join(",", employeeList), false);
+                writeEmployeeData(String.join(Constants.DELIMITER, employeeList), false);
             }
-            System.out.println("Data Updated.");
+            System.out.println(Constants.UPDATED_MESSAGE);
         } else if (args[0].contains("d")) {
-            System.out.println("Loading data ...");
+            System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(",");
+                String[] employeeList = fileContent.split(Constants.DELIMITER);
                 String targetName = args[0].substring(1);
                 List<String> updatedList = new ArrayList<>(Arrays.asList(employeeList));
                 updatedList.remove(targetName);
-                writeEmployeeData(String.join(",", updatedList), false);
+                writeEmployeeData(String.join(Constants.DELIMITER, updatedList), false);
             }
-            System.out.println("Data Deleted.");
+            System.out.println(Constants.DELETED_MESSAGE);
         }
     }
 
@@ -103,7 +103,7 @@ public class EmployeeManager {
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
-                            new FileInputStream("employees.txt")));
+                            new FileInputStream(Constants.FILE_PATH)));
             String fileContent = reader.readLine();
             reader.close();
             return fileContent;
@@ -115,7 +115,7 @@ public class EmployeeManager {
     private static void writeEmployeeData(String content, boolean shouldAppend) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("employees.txt", shouldAppend));
+                    new FileWriter(Constants.FILE_PATH, shouldAppend));
             writer.write(content);
             writer.close();
         } catch (Exception exception) {
