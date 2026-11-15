@@ -14,8 +14,7 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(Constants.DELIMITER);
-                for (String employee : employeeList) {
+                for (String employee : fileContent.split(Constants.DELIMITER)) {
                     System.out.println(employee);
                 }
             }
@@ -26,15 +25,12 @@ public class EmployeeManager {
             if (fileContent != null) {
                 System.out.println(fileContent);
                 String[] employeeList = fileContent.split(Constants.DELIMITER);
-                Random random = new Random();
-                int randomIndex = random.nextInt(employeeList.length);
-                System.out.println(employeeList[randomIndex]);
+                System.out.println(employeeList[new Random().nextInt(employeeList.length)]);
             }
             System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("+")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String newEmployeeName = args[0].substring(1);
-            writeEmployeeData(Constants.DELIMITER + newEmployeeName, true);
+            writeEmployeeData(Constants.DELIMITER + args[0].substring(1), true);
             System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("?")) {
             System.out.println(Constants.LOADING_MESSAGE);
@@ -42,9 +38,8 @@ public class EmployeeManager {
             if (fileContent != null) {
                 String[] employeeList = fileContent.split(Constants.DELIMITER);
                 boolean done = false;
-                String searchName = args[0].substring(1);
                 for (int index = 0; index < employeeList.length && !done; index++) {
-                    if (employeeList[index].equals(searchName)) {
+                    if (employeeList[index].equals(args[0].substring(1))) {
                         System.out.println("Employee found!");
                         done = true;
                     }
@@ -76,9 +71,8 @@ public class EmployeeManager {
             String fileContent = readEmployeeData();
             if (fileContent != null) {
                 String[] employeeList = fileContent.split(Constants.DELIMITER);
-                String targetName = args[0].substring(1);
                 for (int index = 0; index < employeeList.length; index++) {
-                    if (employeeList[index].equals(targetName)) {
+                    if (employeeList[index].equals(args[0].substring(1))) {
                         employeeList[index] = "Updated";
                     }
                 }
@@ -89,10 +83,8 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(Constants.DELIMITER);
-                String targetName = args[0].substring(1);
-                List<String> updatedList = new ArrayList<>(Arrays.asList(employeeList));
-                updatedList.remove(targetName);
+                List<String> updatedList = new ArrayList<>(Arrays.asList(fileContent.split(Constants.DELIMITER)));
+                updatedList.remove(args[0].substring(1));
                 writeEmployeeData(String.join(Constants.DELIMITER, updatedList), false);
             }
             System.out.println(Constants.DELETED_MESSAGE);
@@ -100,24 +92,19 @@ public class EmployeeManager {
     }
 
     private static String readEmployeeData() {
-        try {
-            BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            new FileInputStream(Constants.FILE_PATH)));
-            String fileContent = reader.readLine();
-            reader.close();
-            return fileContent;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(Constants.FILE_PATH)))) {
+            return reader.readLine();
         } catch (Exception exception) {
             return null;
         }
     }
 
     private static void writeEmployeeData(String content, boolean shouldAppend) {
-        try {
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter(Constants.FILE_PATH, shouldAppend));
+        try (BufferedWriter writer = new BufferedWriter(
+                new FileWriter(Constants.FILE_PATH, shouldAppend))) {
             writer.write(content);
-            writer.close();
         } catch (Exception exception) {
         }
     }
