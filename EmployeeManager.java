@@ -36,13 +36,10 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                String[] employeeList = fileContent.split(Constants.DELIMITER);
-                boolean done = false;
-                for (int index = 0; index < employeeList.length && !done; index++) {
-                    if (employeeList[index].equals(args[0].substring(1))) {
-                        System.out.println("Employee found!");
-                        done = true;
-                    }
+                if (Arrays.asList(fileContent.split(Constants.DELIMITER)).contains(args[0].substring(1))) {
+                    System.out.println("Employee found!");
+                } else {
+                    System.out.println("Employee not found.");
                 }
             }
             System.out.println(Constants.LOADED_MESSAGE);
