@@ -2,96 +2,123 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Manages employee records stored in a text file.
+ * Supports listing, random selection, adding, searching, counting, updating, and deleting employees.
+ */
 public class EmployeeManager {
+
     public static void main(String[] args) {
+        // Validate that the user provided exactly one command-line argument
         if (args.length != 1) {
             System.out.println("Error: Wrong number of arguments. Please provide exactly one argument.");
             return;
         }
 
-        // Check arguments
+        // Operation 'l': List all employee names line by line
         if (args[0].equals("l")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                for (String employee : fileContent.split(Constants.DELIMITER)) {
-                    System.out.println(employee);
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                for (String employeeName : employeeDataLine.split(Constants.DELIMITER)) {
+                    System.out.println(employeeName);
                 }
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].equals("s")) {
+        }
+        // Operation 's': Display a randomly selected employee name
+        else if (args[0].equals("s")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                System.out.println(fileContent);
-                String[] employeeList = fileContent.split(Constants.DELIMITER);
-                System.out.println(employeeList[new Random().nextInt(employeeList.length)]);
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                System.out.println(employeeDataLine);
+                String[] employeeNames = employeeDataLine.split(Constants.DELIMITER);
+                System.out.println(employeeNames[new Random().nextInt(employeeNames.length)]);
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].startsWith("+")) {
+        }
+        // Operation '+': Append a new employee name to the data file
+        else if (args[0].startsWith("+")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            writeEmployeeData(Constants.DELIMITER + args[0].substring(1), true);
+            saveEmployeeDataToFile(Constants.DELIMITER + args[0].substring(1), true);
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].startsWith("?")) {
+        }
+        // Operation '?': Search for a specific employee name in the data file
+        else if (args[0].startsWith("?")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                if (Arrays.asList(fileContent.split(Constants.DELIMITER)).contains(args[0].substring(1))) {
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                if (Arrays.asList(employeeDataLine.split(Constants.DELIMITER)).contains(args[0].substring(1))) {
                     System.out.println("Employee found!");
                 } else {
                     System.out.println("Employee not found.");
                 }
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].equals("c")) {
+        }
+        // Operation 'c': Count the number of words and characters in the data file
+        else if (args[0].equals("c")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                System.out.println(fileContent.trim().split("\\s+").length + " word(s) found " + fileContent.length());
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                System.out.println(employeeDataLine.trim().split("\\s+").length + " word(s) found " + employeeDataLine.length());
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].startsWith("u")) {
+        }
+        // Operation 'u': Update a matching employee name to "Updated"
+        else if (args[0].startsWith("u")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                String[] employeeList = fileContent.split(Constants.DELIMITER);
-                for (int index = 0; index < employeeList.length; index++) {
-                    if (employeeList[index].equals(args[0].substring(1))) {
-                        employeeList[index] = "Updated";
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                String[] employeeNames = employeeDataLine.split(Constants.DELIMITER);
+                for (int index = 0; index < employeeNames.length; index++) {
+                    if (employeeNames[index].equals(args[0].substring(1))) {
+                        employeeNames[index] = "Updated";
                     }
                 }
-                writeEmployeeData(String.join(Constants.DELIMITER, employeeList), false);
+                saveEmployeeDataToFile(String.join(Constants.DELIMITER, employeeNames), false);
             }
             System.out.println(Constants.UPDATED_MESSAGE);
-        } else if (args[0].startsWith("d")) {
+        }
+        // Operation 'd': Delete a matching employee name from the data file
+        else if (args[0].startsWith("d")) {
             System.out.println(Constants.LOADING_MESSAGE);
-            String fileContent = readEmployeeData();
-            if (fileContent != null) {
-                List<String> updatedList = new ArrayList<>(Arrays.asList(fileContent.split(Constants.DELIMITER)));
-                updatedList.remove(args[0].substring(1));
-                writeEmployeeData(String.join(Constants.DELIMITER, updatedList), false);
+            String employeeDataLine = loadEmployeeDataFromFile();
+            if (employeeDataLine != null) {
+                List<String> remainingEmployees = new ArrayList<>(Arrays.asList(employeeDataLine.split(Constants.DELIMITER)));
+                remainingEmployees.remove(args[0].substring(1));
+                saveEmployeeDataToFile(String.join(Constants.DELIMITER, remainingEmployees), false);
             }
             System.out.println(Constants.DELETED_MESSAGE);
-        } else {
+        }
+        // Handle any unrecognized command-line argument
+        else {
             System.out.println("Error: Invalid argument provided.");
         }
     }
 
-    private static String readEmployeeData() {
-        try (BufferedReader reader = new BufferedReader(
+    /**
+     * Reads and returns the contents of the employee data file.
+     */
+    private static String loadEmployeeDataFromFile() {
+        try (BufferedReader fileReader = new BufferedReader(
                 new InputStreamReader(
                         new FileInputStream(Constants.FILE_PATH)))) {
-            return reader.readLine();
+            return fileReader.readLine();
         } catch (Exception exception) {
             return null;
         }
     }
 
-    private static void writeEmployeeData(String content, boolean shouldAppend) {
-        try (BufferedWriter writer = new BufferedWriter(
+    /**
+     * Writes content to the employee data file, with an option to append.
+     */
+    private static void saveEmployeeDataToFile(String dataToWrite, boolean shouldAppend) {
+        try (BufferedWriter fileWriter = new BufferedWriter(
                 new FileWriter(Constants.FILE_PATH, shouldAppend))) {
-            writer.write(content);
+            fileWriter.write(dataToWrite);
         } catch (Exception exception) {
+            // Ignore write exceptions to preserve original behavior
         }
     }
 }
