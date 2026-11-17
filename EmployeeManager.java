@@ -28,11 +28,11 @@ public class EmployeeManager {
                 System.out.println(employeeList[new Random().nextInt(employeeList.length)]);
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].contains("+")) {
+        } else if (args[0].startsWith("+")) {
             System.out.println(Constants.LOADING_MESSAGE);
             writeEmployeeData(Constants.DELIMITER + args[0].substring(1), true);
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].contains("?")) {
+        } else if (args[0].startsWith("?")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
@@ -43,14 +43,14 @@ public class EmployeeManager {
                 }
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].contains("c")) {
+        } else if (args[0].equals("c")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
                 System.out.println(fileContent.trim().split("\\s+").length + " word(s) found " + fileContent.length());
             }
             System.out.println(Constants.LOADED_MESSAGE);
-        } else if (args[0].contains("u")) {
+        } else if (args[0].startsWith("u")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
@@ -63,7 +63,7 @@ public class EmployeeManager {
                 writeEmployeeData(String.join(Constants.DELIMITER, employeeList), false);
             }
             System.out.println(Constants.UPDATED_MESSAGE);
-        } else if (args[0].contains("d")) {
+        } else if (args[0].startsWith("d")) {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
@@ -72,6 +72,8 @@ public class EmployeeManager {
                 writeEmployeeData(String.join(Constants.DELIMITER, updatedList), false);
             }
             System.out.println(Constants.DELETED_MESSAGE);
+        } else {
+            System.out.println("Error: Invalid argument provided.");
         }
     }
 
