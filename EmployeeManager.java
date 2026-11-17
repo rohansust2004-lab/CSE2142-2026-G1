@@ -47,20 +47,7 @@ public class EmployeeManager {
             System.out.println(Constants.LOADING_MESSAGE);
             String fileContent = readEmployeeData();
             if (fileContent != null) {
-                char[] characters = fileContent.toCharArray();
-                boolean inWord = false;
-                int wordCount = 0;
-                for (char character : characters) {
-                    if (character == ' ') {
-                        if (!inWord) {
-                            wordCount++;
-                            inWord = true;
-                        } else {
-                            inWord = false;
-                        }
-                    }
-                }
-                System.out.println(wordCount + " word(s) found " + characters.length);
+                System.out.println(fileContent.trim().split("\\s+").length + " word(s) found " + fileContent.length());
             }
             System.out.println(Constants.LOADED_MESSAGE);
         } else if (args[0].contains("u")) {
